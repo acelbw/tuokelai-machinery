@@ -48,6 +48,26 @@ async function getResponseData(response: Response) {
   return data;
 }
 
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  timeoutMs = 15000,
+) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("保存请求超时，请检查 Vercel Blob 配置后重试。");
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
 export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(
     () =>
@@ -134,7 +154,7 @@ export default function AdminPage() {
     const url = "/api/products";
 
     try {
-      const res = await fetch(url, {
+      const res = await fetchWithTimeout(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -154,9 +174,10 @@ export default function AdminPage() {
       setEditing(null);
       setAdding(false);
     } catch (saveError) {
-      setError(
-        saveError instanceof Error ? saveError.message : "Unable to save product.",
-      );
+      const message =
+        saveError instanceof Error ? saveError.message : "商品保存失败，请重试。";
+      setError(message);
+      window.alert(`商品保存失败：${message}`);
     } finally {
       setLoading(false);
     }
