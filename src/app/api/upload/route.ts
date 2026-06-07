@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import {
+  blobErrorResponse,
+  requireBlobCredentials,
+} from "@/lib/blob";
 
 export async function POST(req: NextRequest) {
   try {
+    requireBlobCredentials();
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
@@ -20,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: blob.url });
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Upload failed";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    const result = blobErrorResponse(error, "upload image");
+    return NextResponse.json({ error: result.message }, { status: result.status });
   }
 }

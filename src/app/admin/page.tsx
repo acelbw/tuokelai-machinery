@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Plus, Trash2, Edit3, Save, X, LogIn, LogOut } from "lucide-react";
 
 interface Product {
@@ -32,8 +33,27 @@ const emptyProduct: Product = {
   description: { en: "", zh: "", vi: "", ar: "" },
 };
 
+async function getResponseData(response: Response) {
+  const data: unknown = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message =
+      typeof data === "object" &&
+      data !== null &&
+      "error" in data &&
+      typeof data.error === "string"
+        ? data.error
+        : `Request failed with HTTP ${response.status}`;
+    throw new Error(message);
+  }
+  return data;
+}
+
 export default function AdminPage() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.localStorage.getItem("admin_auth") === "1",
+  );
   const [password, setPassword] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -42,34 +62,64 @@ export default function AdminPage() {
   const [showPwdChange, setShowPwdChange] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [pwdMsg, setPwdMsg] = useState("");
+  const [error, setError] = useState("");
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = async () => {
     const res = await fetch("/api/products");
-    const data = await res.json();
-    setProducts(data);
-  }, []);
-
-  useEffect(() => {
-    if (loggedIn) fetchProducts();
-  }, [loggedIn, fetchProducts]);
-
-  const handleLogin = async () => {
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
-    });
-    if (res.ok) {
-      setLoggedIn(true);
-      localStorage.setItem("admin_auth", "1");
-    } else {
-      alert("密码错误");
-    }
+    const data = await getResponseData(res);
+    if (!Array.isArray(data)) throw new Error("Product API returned invalid data.");
+    setProducts(data as Product[]);
   };
 
   useEffect(() => {
-    if (localStorage.getItem("admin_auth") === "1") setLoggedIn(true);
-  }, []);
+    if (!loggedIn) return;
+    let cancelled = false;
+
+    async function loadProducts() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await getResponseData(res);
+        if (!Array.isArray(data)) {
+          throw new Error("Product API returned invalid data.");
+        }
+        if (!cancelled) {
+          setProducts(data as Product[]);
+          setError("");
+        }
+      } catch (loadError) {
+        if (!cancelled) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Unable to load products.",
+          );
+        }
+      }
+    }
+
+    void loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, [loggedIn]);
+
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      await getResponseData(res);
+      setLoggedIn(true);
+      localStorage.setItem("admin_auth", "1");
+      setError("");
+    } catch (loginError) {
+      setError(
+        loginError instanceof Error ? loginError.message : "登录失败",
+      );
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("admin_auth");
@@ -78,38 +128,56 @@ export default function AdminPage() {
 
   const handleSave = async (product: Product) => {
     setLoading(true);
+    setError("");
     const isNew = !product.id;
     const method = isNew ? "POST" : "PUT";
     const url = "/api/products";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...product,
-        capacityTons: product.specs.capacityTons,
-        maxHeightM: product.specs.maxHeightM,
-        workingRadiusM: product.specs.workingRadiusM,
-        year: product.specs.year,
-        descriptionEn: product.description.en,
-        descriptionZh: product.description.zh,
-        descriptionVi: product.description.vi,
-        descriptionAr: product.description.ar,
-      }),
-    });
-
-    if (res.ok) {
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...product,
+          capacityTons: product.specs.capacityTons,
+          maxHeightM: product.specs.maxHeightM,
+          workingRadiusM: product.specs.workingRadiusM,
+          year: product.specs.year,
+          descriptionEn: product.description.en,
+          descriptionZh: product.description.zh,
+          descriptionVi: product.description.vi,
+          descriptionAr: product.description.ar,
+        }),
+      });
+      await getResponseData(res);
       await fetchProducts();
       setEditing(null);
       setAdding(false);
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error ? saveError.message : "Unable to save product.",
+      );
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("确定删除这个产品？")) return;
-    await fetch(`/api/products?id=${id}`, { method: "DELETE" });
-    await fetchProducts();
+    setError("");
+    try {
+      const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      await getResponseData(res);
+      await fetchProducts();
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Unable to delete product.",
+      );
+    }
   };
 
   if (!loggedIn) {
@@ -131,6 +199,7 @@ export default function AdminPage() {
           >
             <LogIn className="w-4 h-4" /> 登录
           </button>
+          {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
         </div>
       </div>
     );
@@ -152,12 +221,18 @@ export default function AdminPage() {
               <Plus className="w-4 h-4" /> 添加产品
             </button>
             <button onClick={() => setShowPwdChange(true)} className="text-sm text-brand-muted hover:text-brand-text">修改密码</button>
-            <a href="/" className="text-sm text-brand-muted hover:text-brand-text">← 回网站</a>
+            <Link href="/" className="text-sm text-brand-muted hover:text-brand-text">← 回网站</Link>
             <button onClick={handleLogout} className="text-sm text-red-500 hover:text-red-600 flex items-center gap-1">
               <LogOut className="w-3 h-3" /> 退出
             </button>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {(editing || adding) && (
           <div className="bg-white rounded-3xl p-6 mb-8 border border-brand-border-light shadow-sm">
@@ -194,14 +269,16 @@ export default function AdminPage() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ password: newPassword }),
                       });
-                      const data = await res.json();
-                      if (res.ok) {
-                        setPwdMsg("修改成功！新密码已生效");
-                        setTimeout(() => { setShowPwdChange(false); setNewPassword(""); setPwdMsg(""); }, 1500);
-                      } else {
-                        setPwdMsg(data.error || "修改失败");
-                      }
-                    } catch { setPwdMsg("网络错误"); }
+                      await getResponseData(res);
+                      setPwdMsg("修改成功！新密码已生效");
+                      setTimeout(() => { setShowPwdChange(false); setNewPassword(""); setPwdMsg(""); }, 1500);
+                    } catch (passwordError) {
+                      setPwdMsg(
+                        passwordError instanceof Error
+                          ? passwordError.message
+                          : "修改失败",
+                      );
+                    }
                   }}
                   className="flex-1 bg-brand-orange hover:bg-brand-orange-dark text-white font-semibold py-2.5 rounded-xl text-sm"
                 >
@@ -220,7 +297,7 @@ export default function AdminPage() {
 
         <div className="space-y-3">
           {products.length === 0 && (
-            <p className="text-brand-muted text-center py-12">暂无产品，点击"添加产品"开始</p>
+            <p className="text-brand-muted text-center py-12">暂无产品，请点击添加产品开始</p>
           )}
           {products.map((p) => (
             <div key={p.id} className="bg-white rounded-2xl p-5 border border-brand-border-light flex items-center gap-4">
@@ -279,17 +356,28 @@ function ProductForm({
     if (!file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const res = await fetch("/api/upload", { method: "POST", body: formData });
-    if (res.ok) {
-      const data = await res.json();
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await getResponseData(res);
+      if (
+        typeof data !== "object" ||
+        data === null ||
+        !("url" in data) ||
+        typeof data.url !== "string"
+      ) {
+        throw new Error("Upload API returned invalid data.");
+      }
       update("image", data.url);
-    } else {
-      alert("上传失败，请重试");
+    } catch (uploadError) {
+      alert(
+        uploadError instanceof Error ? uploadError.message : "上传失败，请重试",
+      );
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const inputClass = "w-full border border-brand-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
