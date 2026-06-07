@@ -1,0 +1,78 @@
+[
+  {
+    "id": "tc-6015",
+    "model": "QTZ125 (TC5015)",
+    "brand": "XCMG",
+    "image": "/images/products/crane-01.jpg",
+    "specs": {
+      "capacityTons": 8,
+      "maxHeightM": 200,
+      "workingRadiusM": 60,
+      "year": 2020,
+      "condition": "used"
+    },
+    "description": {
+      "en": "XCMG QTZ125 with 8-ton lifting capacity and 60m jib. Perfect for larger construction projects. Recently serviced, all systems operational.",
+      "zh": "徐工QTZ125，起重量8吨，臂长60米。适合大型建筑项目。近期已保养，各系统正常运转。",
+      "vi": "XCMG QTZ125 với sức nâng 8 tấn và cần 60m. Hoàn hảo cho các dự án xây dựng lớn. Mới được bảo dưỡng, tất cả hệ thống hoạt động.",
+      "ar": "رافعة XCMG QTZ125 بقدرة رفع 8 طن وذراع 60 متر. مثالية لمشاريع البناء الكبيرة. تمت صيانتها مؤخراً، جميع الأنظمة تعمل."
+    }
+  },
+  {
+    "id": "tc-7020",
+    "model": "QTZ160 (TC7020)",
+    "brand": "SANY",
+    "image": "/images/products/crane-02.jpg",
+    "specs": {
+      "capacityTons": 10,
+      "maxHeightM": 250,
+      "workingRadiusM": 70,
+      "year": 2021,
+      "condition": "used"
+    },
+    "description": {
+      "en": "Heavy-duty SANY QTZ160 with 10-ton capacity. Designed for high-rise and industrial projects. Low operating hours, excellent condition.",
+      "zh": "三一重工QTZ160重型塔吊，起重量10吨。专为高层和工业项目设计。工作时长低，状态优良。",
+      "vi": "Cần cẩu hạng nặng SANY QTZ160 với sức nâng 10 tấn. Thiết kế cho dự án cao tầng và công nghiệp. Giờ hoạt động thấp, tình trạng tuyệt vời.",
+      "ar": "رافعة SANY QTZ160 الثقيلة بقدرة 10 طن. مصممة للمشاريع الشاهقة والصناعية. ساعات تشغيل منخفضة، حالة ممتازة."
+    }
+  },
+  {
+    "id": "tc-6510",
+    "model": "QTZ100 (TC6510)",
+    "brand": "XCMG",
+    "image": "/images/products/crane-03.jpg",
+    "specs": {
+      "capacityTons": 8,
+      "maxHeightM": 180,
+      "workingRadiusM": 65,
+      "year": 2020,
+      "condition": "used"
+    },
+    "description": {
+      "en": "Versatile XCMG QTZ100, balancing power and reach. Suitable for commercial buildings, bridges, and infrastructure work.",
+      "zh": "多功能徐工QTZ100，动力与臂长兼顾。适用于商业建筑、桥梁及基础设施工程。",
+      "vi": "XCMG QTZ100 đa năng, cân bằng sức mạnh và tầm với. Phù hợp cho tòa nhà thương mại, cầu và công trình hạ tầng.",
+      "ar": "رافعة XCMG QTZ100 متعددة الاستخدامات، توازن بين القوة والمدى. مناسبة للمباني التجارية والجسور وأعمال البنية التحتية."
+    }
+  },
+  {
+    "id": "tc-7520",
+    "model": "QTZ200 (TC7520)",
+    "brand": "SANY",
+    "image": "/images/products/crane-04.jpg",
+    "specs": {
+      "capacityTons": 12,
+      "maxHeightM": 280,
+      "workingRadiusM": 75,
+      "year": 2021,
+      "condition": "used"
+    },
+    "description": {
+      "en": "Top-tier SANY QTZ200 for major construction projects. Maximum lifting capacity of 12 tons with 75m reach. Premium condition.",
+      "zh": "三一旗舰QTZ200，面向大型工程项目。最大起重量12吨，臂长75米。一流状态。",
+      "vi": "SANY QTZ200 cao cấp cho dự án xây dựng lớn. Sức nâng tối đa 12 tấn với tầm với 75m. Tình trạng cao cấp.",
+      "ar": "رافعة SANY QTZ200 الفاخرة للمشاريع الكبرى. قدرة رفع قصوى 12 طن مع مدى 75 متر. حالة ممتازة."
+    }
+  }
+]
