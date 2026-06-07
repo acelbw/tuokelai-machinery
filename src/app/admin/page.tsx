@@ -258,6 +258,8 @@ function ProductForm({
   onCancel: () => void;
   loading: boolean;
 }) {
+  const [uploading, setUploading] = useState(false);
+
   const update = (field: string, value: string | number) => {
     const parts = field.split(".");
     if (parts.length === 1) {
@@ -270,6 +272,24 @@ function ProductForm({
         description: { ...product.description, [parts[1]]: value as string },
       });
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    if (res.ok) {
+      const data = await res.json();
+      update("image", data.url);
+    } else {
+      alert("上传失败，请重试");
+    }
+    setUploading(false);
   };
 
   const inputClass = "w-full border border-brand-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
@@ -286,9 +306,20 @@ function ProductForm({
           <label className={labelClass}>品牌</label>
           <input className={inputClass} value={product.brand} onChange={e => update("brand", e.target.value)} placeholder="XCMG / 徐工" />
         </div>
-        <div>
-          <label className={labelClass}>图片路径</label>
-          <input className={inputClass} value={product.image} onChange={e => update("image", e.target.value)} placeholder="/images/products/crane-01.jpg" />
+        <div className="sm:col-span-2">
+          <label className={labelClass}>图片上传</label>
+          <div className="flex items-center gap-3">
+            <label className="cursor-pointer bg-brand-bg border border-brand-border hover:border-brand-orange px-4 py-2.5 rounded-xl text-sm text-brand-muted transition-colors">
+              {uploading ? "上传中..." : "选择图片"}
+              <input type="file" accept="image/*" onChange={handleFileUpload} disabled={uploading} className="hidden" />
+            </label>
+            {product.image && (
+              <div className="relative group">
+                <img src={product.image} alt="preview" className="h-12 w-12 rounded-lg object-cover border border-brand-border" />
+              </div>
+            )}
+            <span className="text-[11px] text-brand-muted truncate max-w-[200px]">{product.image || "未选择图片"}</span>
+          </div>
         </div>
         <div>
           <label className={labelClass}>年份</label>

@@ -1,16 +1,23 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 import { t } from "@/lib/i18n";
-import { towerCranes, getBrandName } from "@/lib/products";
+import { getTowerCranes, getBrandName, type TowerCrane } from "@/lib/products";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export function FeaturedProducts() {
   const { lang } = useLanguage();
-  const featured = towerCranes.slice(0, 4);
+  const [cranes, setCranes] = useState<TowerCrane[]>([]);
+
+  useEffect(() => {
+    getTowerCranes().then(setCranes);
+  }, []);
+
+  const featured = cranes.slice(0, 4);
 
   return (
     <section className="relative py-28 lg:py-36">

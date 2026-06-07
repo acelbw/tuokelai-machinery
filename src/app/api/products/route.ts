@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
+import { put, list, del } from "@vercel/blob";
 
-const DATA_PATH = path.join(process.cwd(), "data", "products.json");
+const PRODUCTS_KEY = "products/data.json";
 
 async function readProducts() {
-  const raw = await fs.readFile(DATA_PATH, "utf-8");
-  return JSON.parse(raw);
+  try {
+    const { blobs } = await list({ prefix: "products/" });
+    for (const blob of blobs) {
+      if (blob.pathname === PRODUCTS_KEY) {
+        const res = await fetch(blob.url);
+        return await res.json();
+      }
+    }
+  } catch {}
+  return [];
 }
 
 async function writeProducts(data: unknown) {
-  await fs.writeFile(DATA_PATH, JSON.stringify(data, null, 2), "utf-8");
+  await put(PRODUCTS_KEY, JSON.stringify(data, null, 2), {
+    contentType: "application/json",
+    access: "public",
+  });
 }
 
 export async function GET() {

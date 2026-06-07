@@ -1,15 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 import { t } from "@/lib/i18n";
-import { towerCranes, getBrandName } from "@/lib/products";
+import { getTowerCranes, getBrandName, type TowerCrane } from "@/lib/products";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import Link from "next/link";
 
 export default function ProductsPage() {
   const { lang } = useLanguage();
+  const [cranes, setCranes] = useState<TowerCrane[]>([]);
+
+  useEffect(() => {
+    getTowerCranes().then(setCranes);
+  }, []);
 
   return (
     <section className="relative py-28 lg:py-36">
@@ -21,7 +27,7 @@ export default function ProductsPage() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {towerCranes.map((crane, i) => (
+          {cranes.map((crane, i) => (
             <motion.div
               key={crane.id}
               id={crane.id}
