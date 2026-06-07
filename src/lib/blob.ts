@@ -1,35 +1,16 @@
-export class BlobConfigurationError extends Error {
-  constructor() {
-    super(
-      "Vercel Blob is not configured. Connect a Blob store and set BLOB_READ_WRITE_TOKEN.",
-    );
-    this.name = "BlobConfigurationError";
+export function requireBlobCredentials(): void {                                                                      
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {                                                                           
+      throw new Error("BLOB_READ_WRITE_TOKEN environment variable is not configured.");                                 
+    }                                                                                                                   
+  }                                                                                                                     
+                                                                                                                        
+  export function blobErrorResponse(error: unknown, operation: string): { message: string; status: number } {           
+    if (error instanceof Error && error.message.includes("BLOB_READ_WRITE_TOKEN")) {                                    
+      return { message: "Storage credentials are not configured.", status: 500 };                                       
+    }                                                                                                                   
+    if (error instanceof Error && error.message.includes("HTTP 404")) {                                                 
+      return { message: `${operation} failed: the data was not found.`, status: 404 };                                  
+    }                                                                                                                   
+    const message = error instanceof Error ? `${operation} failed: ${error.message}` : `${operation} failed.`;          
+    return { message, status: 500 };                                                                                    
   }
-}
-
-export function requireBlobCredentials() {
-  const hasReadWriteToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
-  const hasOidcCredentials = Boolean(
-    process.env.VERCEL_OIDC_TOKEN?.trim() &&
-      process.env.BLOB_STORE_ID?.trim(),
-  );
-
-  if (!hasReadWriteToken && !hasOidcCredentials) {
-    throw new BlobConfigurationError();
-  }
-}
-
-export function blobErrorResponse(error: unknown, operation: string) {
-  if (error instanceof BlobConfigurationError) {
-    return {
-      status: 503,
-      message: error.message,
-    };
-  }
-
-  console.error(`Vercel Blob ${operation} failed`, error);
-  return {
-    status: 500,
-    message: `Unable to ${operation}. Check the Vercel function logs for details.`,
-  };
-}
