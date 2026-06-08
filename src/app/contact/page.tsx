@@ -46,9 +46,9 @@ export default function ContactPage() {
           <ScrollReveal delay={0.2}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="glass-panel rounded-3xl p-6 border border-brand-border-light text-center">
-                <img src="/images/wechat-qr.jpg" alt="WeChat QR" className="w-40 h-40 mx-auto rounded-2xl object-cover mb-3 shadow-sm" />
-                <p className="text-brand-text font-semibold text-sm">WeChat</p>
-                <p className="text-brand-muted text-xs">{t(lang, "contact.info.wechat")}</p>
+                <img src="/images/wechat-qr.jpg" alt="WhatsApp QR" className="w-40 h-40 mx-auto rounded-2xl object-cover mb-3 shadow-sm" />
+                <p className="text-brand-text font-semibold text-sm">WhatsApp</p>
+                <p className="text-brand-muted text-xs">{t(lang, "contact.info.whatsapp")}</p>
                 <p className="text-brand-muted text-xs mt-0.5">+86 18607316354</p>
               </div>
               <div className="glass-panel rounded-3xl p-6 border border-brand-border-light text-center">

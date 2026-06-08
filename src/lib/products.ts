@@ -1,8 +1,11 @@
+import type { ProductCategory } from "@/lib/productCategories";
+
 export interface TowerCrane {
   id: string;
   model: string;
   brand: string;
   image: string;
+  category?: ProductCategory;
   specs: {
     capacityTons: number;
     maxHeightM: number;

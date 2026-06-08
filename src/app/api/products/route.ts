@@ -5,6 +5,7 @@ import {
   requireBlobCredentials,
 } from "@/lib/blob";
 import type { TowerCrane } from "@/lib/products";
+import { normalizeProductCategory } from "@/lib/productCategories";
 
 const PRODUCTS_KEY = "products/data.json";
 
@@ -27,7 +28,10 @@ async function readProducts(): Promise<TowerCrane[]> {
     throw new Error("Product blob does not contain an array");
   }
 
-  return data as TowerCrane[];
+  return (data as TowerCrane[]).map((product) => ({
+    ...product,
+    category: normalizeProductCategory(product.category),
+  }));
 }
 
 async function writeProducts(data: TowerCrane[]) {
@@ -64,6 +68,7 @@ export async function POST(req: NextRequest) {
       model: body.model || "",
       brand: body.brand || "XCMG",
       image: body.image || "/images/products/crane-01.jpg",
+      category: normalizeProductCategory(body.category),
       specs: {
         capacityTons: Number(body.capacityTons) || 0,
         maxHeightM: Number(body.maxHeightM) || 0,
@@ -112,6 +117,7 @@ export async function PUT(req: NextRequest) {
       model: body.model ?? current.model,
       brand: body.brand ?? current.brand,
       image: body.image ?? current.image,
+      category: normalizeProductCategory(body.category ?? current.category),
       specs: {
         capacityTons: numberOrCurrent(body.capacityTons, current.specs.capacityTons),
         maxHeightM: numberOrCurrent(body.maxHeightM, current.specs.maxHeightM),

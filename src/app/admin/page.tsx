@@ -3,12 +3,19 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Trash2, Edit3, Save, X, LogIn, LogOut } from "lucide-react";
+import {
+  getProductCategoryLabel,
+  normalizeProductCategory,
+  productCategories,
+  type ProductCategory,
+} from "@/lib/productCategories";
 
 interface Product {
   id: string;
   model: string;
   brand: string;
   image: string;
+  category: ProductCategory;
   specs: {
     capacityTons: number;
     maxHeightM: number;
@@ -29,6 +36,7 @@ const emptyProduct: Product = {
   model: "",
   brand: "XCMG",
   image: "/images/products/crane-01.jpg",
+  category: "tower-cranes",
   specs: { capacityTons: 0, maxHeightM: 0, workingRadiusM: 0, year: 2025, condition: "used" },
   description: { en: "", zh: "", vi: "", ar: "" },
 };
@@ -327,7 +335,13 @@ export default function AdminPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-brand-text text-sm">{p.model}</p>
-                <p className="text-xs text-brand-muted">{p.brand} · {p.specs.capacityTons}t · {p.specs.year}</p>
+                <p className="text-xs text-brand-muted">
+                  {p.brand} · {p.specs.capacityTons}t · {p.specs.year} ·{" "}
+                  {getProductCategoryLabel(
+                    normalizeProductCategory(p.category),
+                    "zh",
+                  )}
+                </p>
               </div>
               <button onClick={() => setEditing({ ...p })} className="p-2 text-brand-muted hover:text-brand-orange transition-colors">
                 <Edit3 className="w-4 h-4" />
@@ -415,7 +429,21 @@ function ProductForm({
           <label className={labelClass}>品牌</label>
           <input className={inputClass} value={product.brand} onChange={e => update("brand", e.target.value)} placeholder="XCMG / 徐工" />
         </div>
-        <div className="sm:col-span-2">
+        <div>
+          <label className={labelClass}>产品系列</label>
+          <select
+            className={inputClass}
+            value={product.category}
+            onChange={(e) => update("category", e.target.value)}
+          >
+            {productCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.label.zh}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
           <label className={labelClass}>图片上传</label>
           <div className="flex items-center gap-3">
             <label className="cursor-pointer bg-brand-bg border border-brand-border hover:border-brand-orange px-4 py-2.5 rounded-xl text-sm text-brand-muted transition-colors">
