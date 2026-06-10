@@ -467,7 +467,7 @@ function ProductForm({
           <input className={inputClass} type="number" value={product.specs.capacityTons} onChange={e => update("specs.capacityTons", e.target.value)} />
         </div>
         <div>
-          <label className={labelClass}>最大高度 (米)</label>
+          <label className={labelClass}>标准高度 (米)</label>
           <input className={inputClass} type="number" value={product.specs.maxHeightM} onChange={e => update("specs.maxHeightM", e.target.value)} />
         </div>
         <div>
