@@ -5,6 +5,7 @@ export interface TowerCrane {
   model: string;
   brand: string;
   image: string;
+  images?: string[];
   category?: ProductCategory;
   specs: {
     capacityTons: number;

@@ -16,6 +16,7 @@ import {
   type ProductCategory,
 } from "@/lib/productCategories";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { ProductImageCarousel } from "@/components/ui/ProductImageCarousel";
 
 const categoryIcons = {
   "tower-cranes": Building2,
@@ -147,14 +148,7 @@ export default function ProductsPage() {
                 }}
               >
                 <div className="card-premium glass-panel rounded-3xl overflow-hidden">
-                  <div className="aspect-[16/10] bg-brand-bg-alt overflow-hidden">
-                    <img
-                      src={crane.image}
-                      alt={crane.model}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 ease-out"
-                      loading="lazy"
-                    />
-                  </div>
+                  <ProductImageCarousel images={crane.images} fallbackImage={crane.image} alt={crane.model} />
                   <div className="p-7">
                     <div className="flex items-start justify-between mb-4">
                       <div>

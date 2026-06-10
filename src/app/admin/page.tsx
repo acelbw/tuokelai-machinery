@@ -15,6 +15,7 @@ interface Product {
   model: string;
   brand: string;
   image: string;
+  images: string[];
   category: ProductCategory;
   specs: {
     capacityTons: number;
@@ -36,6 +37,7 @@ const emptyProduct: Product = {
   model: "",
   brand: "XCMG",
   image: "/images/products/crane-01.jpg",
+  images: ["/images/products/crane-01.jpg"],
   category: "tower-cranes",
   specs: { capacityTons: 0, maxHeightM: 0, workingRadiusM: 0, year: 2025, condition: "used" },
   description: { en: "", zh: "", vi: "", ar: "" },
@@ -387,32 +389,48 @@ function ProductForm({
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await getResponseData(res);
-      if (
-        typeof data !== "object" ||
-        data === null ||
-        !("url" in data) ||
-        typeof data.url !== "string"
-      ) {
-        throw new Error("Upload API returned invalid data.");
-      }
-      update("image", data.url);
+      const uploadedUrls = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          const res = await fetch("/api/upload", { method: "POST", body: formData });
+          const data = await getResponseData(res);
+          if (
+            typeof data !== "object" ||
+            data === null ||
+            !("url" in data) ||
+            typeof data.url !== "string"
+          ) {
+            throw new Error("Upload API returned invalid data.");
+          }
+          return data.url;
+        }),
+      );
+      const currentImages = product.images?.length
+        ? product.images
+        : product.image
+          ? [product.image]
+          : [];
+      const images = [...new Set([...currentImages, ...uploadedUrls])];
+      onChange({ ...product, image: images[0], images });
     } catch (uploadError) {
       alert(
         uploadError instanceof Error ? uploadError.message : "上传失败，请重试",
       );
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
+  };
+
+  const removeImage = (imageToRemove: string) => {
+    const images = (product.images || []).filter((image) => image !== imageToRemove);
+    onChange({ ...product, image: images[0] || "", images });
   };
 
   const inputClass = "w-full border border-brand-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange/20";
@@ -445,17 +463,28 @@ function ProductForm({
         </div>
         <div>
           <label className={labelClass}>图片上传</label>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <label className="cursor-pointer bg-brand-bg border border-brand-border hover:border-brand-orange px-4 py-2.5 rounded-xl text-sm text-brand-muted transition-colors">
               {uploading ? "上传中..." : "选择图片"}
-              <input type="file" accept="image/*" onChange={handleFileUpload} disabled={uploading} className="hidden" />
+              <input type="file" accept="image/*" multiple onChange={handleFileUpload} disabled={uploading} className="hidden" />
             </label>
-            {product.image && (
-              <div className="relative group">
-                <img src={product.image} alt="preview" className="h-12 w-12 rounded-lg object-cover border border-brand-border" />
+            {(product.images?.length ? product.images : product.image ? [product.image] : []).map((image, index) => (
+              <div key={image} className="relative group">
+                <img src={image} alt={`preview ${index + 1}`} className="h-12 w-12 rounded-lg object-cover border border-brand-border" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(image)}
+                  aria-label="Remove image"
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white opacity-0 shadow transition-opacity group-hover:opacity-100 focus:opacity-100"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+                {index === 0 && (
+                  <span className="absolute bottom-0 left-0 right-0 rounded-b-lg bg-black/60 py-0.5 text-center text-[9px] text-white">封面</span>
+                )}
               </div>
-            )}
-            <span className="text-[11px] text-brand-muted truncate max-w-[200px]">{product.image || "未选择图片"}</span>
+            ))}
+            <span className="text-[11px] text-brand-muted">可一次选择多张图片</span>
           </div>
         </div>
         <div>

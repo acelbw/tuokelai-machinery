@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { blobErrorResponse, requireBlobCredentials } from "@/lib/blob";
 import type { TowerCrane } from "@/lib/products";
 import { normalizeProductCategory } from "@/lib/productCategories";
+import { prepareProductImages } from "@/lib/productImages";
 
 const PRODUCTS_KEY = "products/data.json";
 
@@ -22,6 +23,7 @@ async function readProducts(): Promise<TowerCrane[]> {
   }
   return (data as TowerCrane[]).map((product) => ({
     ...product,
+    ...prepareProductImages(product.images, product.image),
     category: normalizeProductCategory(product.category),
   }));
 }
@@ -64,11 +66,12 @@ export async function POST(req: NextRequest) {
 
     const products = await readProducts();
     const description = body.descriptionZh || body.descriptionEn || body.desc || "";
+    const productImages = prepareProductImages(body.images, body.image);
     const product: TowerCrane = {
       id: `tc-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       model: body.model.trim(),
       brand: typeof body.brand === "string" ? body.brand.trim() : "XCMG",
-      image: body.image || "/images/products/crane-01.jpg",
+      ...productImages,
       category: normalizeProductCategory(body.category),
       specs: {
         capacityTons: numberOr(body.capacityTons, 0),
@@ -104,11 +107,15 @@ export async function PUT(req: NextRequest) {
 
     const current = products[index];
     const description = body.descriptionZh || body.descriptionEn || body.desc;
+    const productImages = prepareProductImages(
+      body.images ?? current.images,
+      body.image ?? current.image,
+    );
     products[index] = {
       ...current,
       model: body.model ?? current.model,
       brand: body.brand ?? current.brand,
-      image: body.image ?? current.image,
+      ...productImages,
       category: normalizeProductCategory(body.category ?? current.category),
       specs: {
         capacityTons: numberOr(body.capacityTons, current.specs.capacityTons),
