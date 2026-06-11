@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { t } from "@/lib/i18n";
 
@@ -61,6 +61,12 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 shrink-0 text-brand-orange/60" />
                 <span>+86 18607316354</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="w-4 h-4 shrink-0 text-brand-orange/60" />
+                <a href="mailto:89482764@qq.com" className="hover:text-white transition-colors">
+                  89482764@qq.com
+                </a>
               </li>
             </ul>
           </div>
