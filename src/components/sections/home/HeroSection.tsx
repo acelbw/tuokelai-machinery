@@ -13,13 +13,15 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Warm dark background */}
       <div className="absolute inset-0 bg-brand-dark" />
+      <div className="absolute inset-0 bg-[url('/images/products/crane-01.jpg')] bg-cover bg-center opacity-20" />
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/75 via-brand-dark/90 to-brand-dark" />
       <div className="absolute inset-0 bg-dots opacity-30" />
 
       {/* Warm ambient glows */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-orange/[0.06] rounded-full blur-[150px] translate-x-1/4 -translate-y-1/4" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-orange/[0.04] rounded-full blur-[120px] -translate-x-1/4 translate-y-1/4" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-32 text-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-36 text-center">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -41,7 +43,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.02] mb-8 tracking-[-0.04em] max-w-5xl mx-auto"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.02] mb-8 tracking-[-0.04em] max-w-5xl mx-auto drop-shadow-2xl"
         >
           {t(lang, "hero.title")}
         </motion.h1>

@@ -14,6 +14,7 @@ export function Navbar() {
   const navLinks = [
     { key: "nav.home", href: "/" },
     { key: "nav.products", href: "/products" },
+    { key: "nav.cases", href: "/#cases" },
     { key: "nav.about", href: "/about" },
     { key: "nav.contact", href: "/contact" },
   ];
@@ -21,11 +22,11 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-brand-border">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex h-[72px] items-center justify-between lg:h-24">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <span className="text-xl">🏗️</span>
-            <span className="font-bold text-brand-text text-sm lg:text-base tracking-[-0.02em] group-hover:text-brand-orange transition-colors duration-300">
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
+            <span className="text-2xl lg:text-3xl">🏗️</span>
+            <span className="font-bold text-brand-text text-base lg:text-xl tracking-[-0.02em] group-hover:text-brand-orange transition-colors duration-300">
               {t(lang, "site.name")}
             </span>
           </Link>
@@ -36,7 +37,7 @@ export function Navbar() {
               <Link
                 key={link.key}
                 href={link.href}
-                className="px-4 py-2 text-sm text-brand-muted hover:text-brand-text transition-colors duration-200 rounded-xl hover:bg-brand-bg-alt font-medium"
+                className="px-4 py-2 text-[15px] text-brand-muted hover:text-brand-text transition-colors duration-200 rounded-xl hover:bg-brand-bg-alt font-medium"
               >
                 {t(lang, link.key)}
               </Link>
