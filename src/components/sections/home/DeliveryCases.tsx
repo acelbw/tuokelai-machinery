@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ClipboardCheck, Container, FileCheck2, PackageCheck, Ship, Truck } from "lucide-react";
+import { ArrowRight, ClipboardCheck, PackageCheck, PlayCircle, Ship, Truck, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -18,11 +18,9 @@ const copy = {
       ["Ship & Track", "Export documents, customs clearance and shipping updates until the machine reaches port."],
       ["Handover Support", "Provide installation guidance, spare parts support and after-sales communication."],
     ],
-    cards: [
-      ["Tower Crane Loading", "Container loading and reinforcement records available for buyer review."],
-      ["Export Documentation", "Packing list, invoice, photos and shipping documents prepared clearly."],
-      ["Overseas Delivery", "Equipment shipped to overseas projects with remote technical support."],
-    ],
+    galleryTitle: "Customer Visits & Process Records",
+    photos: ["Customer Meeting", "Project Discussion", "On-Site Communication"],
+    videos: ["Equipment & Delivery Record", "Loading Process", "Site Material", "Delivery Detail", "Project Reference"],
   },
   zh: {
     eyebrow: "交付案例",
@@ -35,11 +33,9 @@ const copy = {
       ["出口跟踪", "协助整理箱单、发票、报关和船运资料，全程跟进到港。"],
       ["交付支持", "提供安装指导、配件采购和售后沟通，交付后也有人对接。"],
     ],
-    cards: [
-      ["塔机装柜记录", "装车、加固、封柜等过程资料可整理给客户查看。"],
-      ["出口文件准备", "箱单、发票、设备照片、船运资料清楚完整。"],
-      ["海外项目交付", "设备出口到海外项目，并提供远程技术支持。"],
-    ],
+    galleryTitle: "客户接待与过程资料",
+    photos: ["客户洽谈", "项目沟通", "现场交流"],
+    videos: ["设备与交付记录", "装车过程", "现场资料", "交付细节", "项目参考"],
   },
   vi: {
     eyebrow: "Hồ Sơ Giao Hàng",
@@ -52,11 +48,9 @@ const copy = {
       ["Vận Chuyển", "Chứng từ xuất khẩu, hải quan và cập nhật vận chuyển đến cảng."],
       ["Hỗ Trợ", "Hướng dẫn lắp đặt, phụ tùng và hỗ trợ sau bán."],
     ],
-    cards: [
-      ["Bốc Xếp Cần Cẩu", "Hồ sơ bốc xếp và gia cố có sẵn cho khách hàng."],
-      ["Chứng Từ Xuất Khẩu", "Packing list, invoice, hình ảnh và chứng từ vận chuyển rõ ràng."],
-      ["Giao Hàng Quốc Tế", "Thiết bị được giao đến dự án nước ngoài với hỗ trợ kỹ thuật."],
-    ],
+    galleryTitle: "Khách Hàng & Hồ Sơ Quy Trình",
+    photos: ["Gặp Khách Hàng", "Trao Đổi Dự Án", "Liên Lạc Tại Chỗ"],
+    videos: ["Hồ Sơ Thiết Bị", "Quá Trình Bốc Xếp", "Tư Liệu Hiện Trường", "Chi Tiết Giao Hàng", "Tham Khảo Dự Án"],
   },
   ar: {
     eyebrow: "حالات التسليم",
@@ -69,16 +63,25 @@ const copy = {
       ["شحن وتتبع", "مستندات التصدير والجمارك وتحديثات الشحن حتى الوصول."],
       ["دعم التسليم", "إرشادات تركيب ودعم قطع الغيار وخدمة ما بعد البيع."],
     ],
-    cards: [
-      ["تحميل الرافعة", "سجلات التحميل والتثبيت متاحة للمراجعة."],
-      ["مستندات التصدير", "قائمة التعبئة والفاتورة والصور ومستندات الشحن بوضوح."],
-      ["تسليم خارجي", "تسليم المعدات للمشاريع الخارجية مع دعم فني عن بعد."],
-    ],
+    galleryTitle: "زيارات العملاء وسجلات العملية",
+    photos: ["لقاء العملاء", "مناقشة المشروع", "تواصل ميداني"],
+    videos: ["سجل المعدات والتسليم", "عملية التحميل", "مواد الموقع", "تفاصيل التسليم", "مرجع المشروع"],
   },
 } as const;
 
 const icons = [ClipboardCheck, Truck, Ship, PackageCheck];
-const cardIcons = [Container, FileCheck2, PackageCheck];
+const photos = [
+  "/media/cases/client-meeting-01.jpg",
+  "/media/cases/client-meeting-02.jpg",
+  "/media/cases/client-meeting-03.jpg",
+];
+const videos = [
+  "/media/cases/delivery-video-01.mp4",
+  "/media/cases/delivery-video-02.mp4",
+  "/media/cases/delivery-video-03.mp4",
+  "/media/cases/delivery-video-04.mp4",
+  "/media/cases/delivery-video-05.mp4",
+];
 
 export function DeliveryCases() {
   const { lang } = useLanguage();
@@ -118,26 +121,50 @@ export function DeliveryCases() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {text.cards.map(([title, desc], index) => {
-            const CardIcon = cardIcons[index];
-            return (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="rounded-3xl border border-white/10 bg-white/[0.06] p-7 backdrop-blur"
-              >
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-white/[0.08] text-brand-orange ring-1 ring-white/10">
-                  <CardIcon className="h-7 w-7" />
+        <div className="mb-6 flex items-center gap-3">
+          <Users className="h-5 w-5 text-brand-orange" />
+          <h3 className="text-xl font-semibold text-white">{text.galleryTitle}</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+          {photos.map((photo, index) => (
+            <motion.div
+              key={photo}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] backdrop-blur"
+            >
+              <img src={photo} alt={text.photos[index]} className="h-72 w-full object-cover" loading="lazy" />
+              <div className="p-5">
+                <p className="text-sm font-semibold text-white">{text.photos[index]}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-5">
+          {videos.map((video, index) => (
+            <motion.div
+              key={video}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] backdrop-blur"
+            >
+              <div className="relative aspect-[9/16] bg-black">
+                <video src={video} controls preload="metadata" className="h-full w-full object-cover" />
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-black/45 p-2 text-white backdrop-blur-sm">
+                  <PlayCircle className="h-5 w-5" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
-                <p className="text-sm leading-relaxed text-white/55">{desc}</p>
-              </motion.div>
-            );
-          })}
+              </div>
+              <div className="p-5">
+                <p className="text-sm font-semibold text-white">{text.videos[index]}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         <div className="mt-12 text-center">
