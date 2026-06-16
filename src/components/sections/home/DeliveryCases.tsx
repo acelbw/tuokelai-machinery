@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ClipboardCheck, Container, PackageCheck, Ship, Truck } from "lucide-react";
+import { ArrowRight, ClipboardCheck, Container, FileCheck2, PackageCheck, Ship, Truck } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -78,7 +78,7 @@ const copy = {
 } as const;
 
 const icons = [ClipboardCheck, Truck, Ship, PackageCheck];
-const images = ["/images/products/crane-02.jpg", "/images/products/crane-04.jpg", "/images/products/crane-06.jpg"];
+const cardIcons = [Container, FileCheck2, PackageCheck];
 
 export function DeliveryCases() {
   const { lang } = useLanguage();
@@ -86,7 +86,7 @@ export function DeliveryCases() {
 
   return (
     <section id="cases" className="relative overflow-hidden py-28 lg:py-36 bg-brand-dark">
-      <div className="absolute inset-0 bg-[url('/images/products/crane-03.jpg')] bg-cover bg-center opacity-15" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(238,112,0,0.18),transparent_32%),radial-gradient(circle_at_85%_70%,rgba(255,255,255,0.08),transparent_30%)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-brand-dark via-brand-dark/95 to-brand-dark" />
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <SectionHeader
@@ -119,22 +119,25 @@ export function DeliveryCases() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {text.cards.map(([title, desc], index) => (
-            <motion.div
-              key={title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.08 }}
-              className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] backdrop-blur"
-            >
-              <img src={images[index]} alt={title} className="h-56 w-full object-cover" loading="lazy" />
-              <div className="p-6">
+          {text.cards.map(([title, desc], index) => {
+            const CardIcon = cardIcons[index];
+            return (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                className="rounded-3xl border border-white/10 bg-white/[0.06] p-7 backdrop-blur"
+              >
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-white/[0.08] text-brand-orange ring-1 ring-white/10">
+                  <CardIcon className="h-7 w-7" />
+                </div>
                 <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
                 <p className="text-sm leading-relaxed text-white/55">{desc}</p>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
 
         <div className="mt-12 text-center">

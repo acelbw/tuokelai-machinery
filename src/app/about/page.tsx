@@ -65,7 +65,7 @@ export default function AboutPage() {
 
   return (
     <section className="relative overflow-hidden py-28 lg:py-36">
-      <div className="absolute inset-x-0 top-0 h-[520px] bg-[url('/images/products/crane-05.jpg')] bg-cover bg-center opacity-10" />
+      <div className="absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_50%_10%,rgba(238,112,0,0.12),transparent_34%)]" />
       <div className="absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-brand-orange/5 to-brand-bg" />
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <SectionHeader

@@ -13,8 +13,8 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Warm dark background */}
       <div className="absolute inset-0 bg-brand-dark" />
-      <div className="absolute inset-0 bg-[url('/images/products/crane-01.jpg')] bg-cover bg-center opacity-20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/75 via-brand-dark/90 to-brand-dark" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(238,112,0,0.16),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_28%,rgba(255,255,255,0.04)_62%,transparent_100%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/80 via-brand-dark/92 to-brand-dark" />
       <div className="absolute inset-0 bg-dots opacity-30" />
 
       {/* Warm ambient glows */}
